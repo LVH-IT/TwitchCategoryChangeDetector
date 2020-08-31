@@ -20,6 +20,7 @@ func getGameInfo(gameID string) game {
 	gameJSON = strings.ReplaceAll(gameJSON, "]", "")
 	var gameInfo game
 	json.Unmarshal([]byte(gameJSON), &gameInfo)
+
 	return gameInfo
 }
 

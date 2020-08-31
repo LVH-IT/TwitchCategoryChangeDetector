@@ -16,7 +16,6 @@ var bearerToken string //loaded via loadConfig()
 var clientID string    //loaded via loadConfig()
 var soundFile string   //loaded via loadConfig()
 var streamInfo stream
-var test string
 
 //Definitions of all the flags
 var streamName string

@@ -1,4 +1,5 @@
-# TwitchCategoryChangeDetector
+# Twitch Category Change Detector
+This program simply checks the current category of a twitch streamer and notifies you as soon as it changes.  
 
 To compile you need to install GO from https://golang.org/dl/  
 Then open a command prompt in the source directory and type "go build main.go"  

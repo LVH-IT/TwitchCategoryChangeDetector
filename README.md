@@ -7,12 +7,13 @@ This program simply checks the current category of a twitch streamer and notifie
 
 
 ## Usage
-Download the latest release and and you are ready to go. There are no prerequisites when using the already compiled binary file.  
+Download the latest release and contine with "How to setup". There are no prerequisites when using the already compiled binary file.  
 But if you want you can also compile the code yourself as explained below.  
 
 
 ### How to setup
 The executable needs an audio file in the same directory called "juntos.ogg" in order to notify the user of a category change, but you can also change the audio filename in the config.json file.  
+Your audio file has to use the vorbis codec however (usually .ogg files) or the program will not work.  
 I got my sound from here: https://notificationsounds.com/message-tones/juntos-607  
 
 In the config file you have to set a bearer token and a client id to use the twitch api.  
@@ -23,8 +24,11 @@ To do that simply open a command prompt and type:
 
 curl -X POST "https://id.twitch.tv/oauth2/token?client_id=PUTYOURCLIENTIDHERE&client_secret=PUTYOURCLIENTSECRETHERE&grant_type=client_credentials"  
 
-Just replace "PUTYOURCLIENTIDHERE" and "PUTYOURCLIENTSECRET" whith the actual information.  
-You will then find your bearer token in the response and you can also put it into the config.json file.   
+Just replace "PUTYOURCLIENTIDHERE" and "PUTYOURCLIENTSECRETHERE" whith the actual information you got before.  
+You will then find your bearer token in the response and you can put it into the config.json file.  
+Just keep in mind that your bearer token will expire after the amount of time given in the curl response and you will have to get a now one.  
+
+You are now done and you can use quickstart.bat to start monitoring a twitch channel.
 
 
 ### Flags you can use

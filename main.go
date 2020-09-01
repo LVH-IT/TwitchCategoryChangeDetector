@@ -24,10 +24,6 @@ var retryInterval int
 func main() {
 	parseFlags()
 	loadConfig()
-	startTime := time.Now()
-	elapsed := int(time.Now().Sub(startTime))
-	_ = elapsed //Bypass unused error
-
 	getStreamInfoWithOnlineCheck()
 
 	oldGameID := streamInfo.Data.GameID
@@ -39,8 +35,6 @@ func main() {
 		for oldGameName == "" {
 			waitRetryInterval()
 			oldGameName = getGameInfo(oldGameID).Data.Name
-			startTime = time.Now()
-			elapsed = int(time.Now().Sub(startTime))
 		}
 		fmt.Printf("Game name found\n")
 	}
@@ -59,13 +53,11 @@ func main() {
 		for newGameName == "" {
 			waitRetryInterval()
 			newGameName = getGameInfo(oldGameID).Data.Name
-			startTime = time.Now()
-			elapsed = int(time.Now().Sub(startTime))
 		}
 		fmt.Printf("Game name found\n")
 	}
 
-	fmt.Printf("Category changed to: " + newGameName)
+	fmt.Printf("Category changed to: " + newGameName + "\n")
 	playSound()
 }
 
@@ -100,10 +92,10 @@ func getStreamInfoWithOnlineCheck() {
 
 func waitRetryInterval() {
 	startTime := time.Now()
-	elapsed := int(time.Now().Sub(startTime))
+	elapsed := int(time.Since(startTime))
 	for elapsed < retryInterval {
 		time.Sleep(1000000000) //sleep for 1000000000ns = 1000ms = 1s
-		elapsed = int(time.Now().Sub(startTime).Seconds())
+		elapsed = int(time.Since(startTime).Seconds())
 	}
 }
 

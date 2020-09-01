@@ -31,7 +31,7 @@ type gameData struct {
 }
 
 type game struct {
-	Data gameData
+	Data gameData `json:"data"`
 }
 
 func getStreamInfo(streamerName string) stream {
@@ -64,5 +64,5 @@ type streamData struct {
 }
 
 type stream struct {
-	Data streamData
+	Data streamData `json:"data"`
 }

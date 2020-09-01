@@ -8,19 +8,9 @@ import (
 )
 
 func getGameInfo(gameID string) game {
-	httpClient := &http.Client{}
-	req, _ := http.NewRequest("GET", "https://api.twitch.tv/helix/games?id="+gameID, nil)
-	req.Header.Add("Authorization", "Bearer "+bearerToken)
-	req.Header.Add("Client-ID", clientID)
-	resp, err := httpClient.Do(req)
-	checkError(err)
-	body, _ := ioutil.ReadAll(resp.Body)
-	gameJSON := string(body)
-	gameJSON = strings.ReplaceAll(gameJSON, "[", "")
-	gameJSON = strings.ReplaceAll(gameJSON, "]", "")
+	gameJSON := getAPIInfo("games?id=" + gameID)
 	var gameInfo game
 	json.Unmarshal([]byte(gameJSON), &gameInfo)
-
 	return gameInfo
 }
 
@@ -35,16 +25,8 @@ type game struct {
 }
 
 func getStreamInfo(streamerName string) stream {
-	httpClient := &http.Client{}
-	req, _ := http.NewRequest("GET", "https://api.twitch.tv/helix/streams?user_login="+streamerName, nil)
-	req.Header.Add("Authorization", "Bearer "+bearerToken)
-	req.Header.Add("Client-ID", clientID)
-	resp, err := httpClient.Do(req)
-	checkError(err)
-	body, _ := ioutil.ReadAll(resp.Body)
-	streamJSON := string(body)
-	streamJSON = strings.ReplaceAll(streamJSON, "[", "")
-	streamJSON = strings.ReplaceAll(streamJSON, "]", "")
+	streamJSON := getAPIInfo("streams?user_login=" + streamerName)
+	var streamInfo stream
 	json.Unmarshal([]byte(streamJSON), &streamInfo)
 	return streamInfo
 }
@@ -65,4 +47,18 @@ type streamData struct {
 
 type stream struct {
 	Data streamData `json:"data"`
+}
+
+func getAPIInfo(endPointAndParams string) string {
+	httpClient := &http.Client{}
+	req, _ := http.NewRequest("GET", "https://api.twitch.tv/helix/"+endPointAndParams, nil)
+	req.Header.Add("Authorization", "Bearer "+bearerToken)
+	req.Header.Add("Client-ID", clientID)
+	resp, err := httpClient.Do(req)
+	checkError(err)
+	body, _ := ioutil.ReadAll(resp.Body)
+	apiJSON := string(body)
+	apiJSON = strings.ReplaceAll(apiJSON, "[", "")
+	apiJSON = strings.ReplaceAll(apiJSON, "]", "")
+	return apiJSON
 }

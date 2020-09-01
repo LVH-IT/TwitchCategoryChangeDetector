@@ -1,7 +1,0 @@
-os: 
-- windows
-- osx
-- linux
-language: go
-go:
-- "1.15"

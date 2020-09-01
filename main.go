@@ -26,33 +26,33 @@ func main() {
 	loadConfig()
 	getStreamInfoWithOnlineCheck()
 
-	oldGameID := streamInfo.Data.GameID
-	oldGameName := getGameInfo(oldGameID).Data.Name
-	newGameID := streamInfo.Data.GameID
+	oldGameID := streamInfo.GameID
+	oldGameName := getGameInfo(oldGameID).Name
+	newGameID := streamInfo.GameID
 
 	if oldGameName == "" {
 		fmt.Printf("Game name not found. Retrying in: " + fmt.Sprint(retryInterval) + "s\n")
 		for oldGameName == "" {
 			waitRetryInterval()
-			oldGameName = getGameInfo(oldGameID).Data.Name
+			oldGameName = getGameInfo(oldGameID).Name
 		}
 		fmt.Printf("Game name found\n")
 	}
 
-	fmt.Printf("Channel to monitor: " + streamInfo.Data.UserName + "\n")
+	fmt.Printf("Channel to monitor: " + streamInfo.UserName + "\n")
 	fmt.Printf("Current Category: " + oldGameName + "\nWaiting for change (Checking every " + fmt.Sprint(retryInterval) + "s)\n")
 	for oldGameID == newGameID {
 		waitRetryInterval()
 		getStreamInfoWithOnlineCheck()
-		newGameID = streamInfo.Data.GameID
+		newGameID = streamInfo.GameID
 	}
 
-	newGameName := getGameInfo(newGameID).Data.Name
+	newGameName := getGameInfo(newGameID).Name
 	if newGameName == "" {
 		fmt.Printf("Game name not found. Retrying in: " + fmt.Sprint(retryInterval) + "s\n")
 		for newGameName == "" {
 			waitRetryInterval()
-			newGameName = getGameInfo(oldGameID).Data.Name
+			newGameName = getGameInfo(oldGameID).Name
 		}
 		fmt.Printf("Game name found\n")
 	}
@@ -78,10 +78,9 @@ func playSound() {
 
 func getStreamInfoWithOnlineCheck() {
 	streamInfo = getStreamInfo(streamName)
-
-	if streamInfo.Data.StartedAt == "" {
+	if streamInfo.StartedAt == "" {
 		fmt.Printf(streamName + " is currently offline. Waiting for change (Checking every " + fmt.Sprint(retryInterval) + "s)\n")
-		for streamInfo.Data.StartedAt == "" {
+		for streamInfo.StartedAt == "" {
 			waitRetryInterval()
 			streamInfo = getStreamInfo(streamName)
 		}

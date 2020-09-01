@@ -1,52 +1,44 @@
 package main
 
 import (
-	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"strings"
+
+	"github.com/m7shapan/njson"
 )
 
 func getGameInfo(gameID string) game {
 	gameJSON := getAPIInfo("games?id=" + gameID)
 	var gameInfo game
-	json.Unmarshal([]byte(gameJSON), &gameInfo)
+	njson.Unmarshal([]byte(gameJSON), &gameInfo)
 	return gameInfo
 }
 
-type gameData struct {
-	BoxArtURL string `json:"box_art_url"`
-	ID        int    `json:"id"`
-	Name      string `json:"name"`
-}
-
 type game struct {
-	Data gameData `json:"data"`
+	ID        int    `njson:"data.0.id"`
+	Name      string `njson:"data.0.name"`
+	BoxArtURL string `njson:"data.0.box_art_url"`
 }
 
 func getStreamInfo(streamerName string) stream {
 	streamJSON := getAPIInfo("streams?user_login=" + streamerName)
 	var streamInfo stream
-	json.Unmarshal([]byte(streamJSON), &streamInfo)
+	njson.Unmarshal([]byte(streamJSON), &streamInfo)
 	return streamInfo
 }
 
-type streamData struct {
-	ID           string `json:"id"`
-	UserID       string `json:"user_id"`
-	UserName     string `json:"user_name"`
-	GameID       string `json:"game_id"`
-	Type         string `json:"type"`
-	Title        string `json:"title"`
-	ViewerCount  string `json:"viewer_count"`
-	StartedAt    string `json:"started_at"`
-	Language     string `json:"language"`
-	ThumbnailURL string `json:"thumbnail_url"`
-	TagIDs       string `json:"tag_ids"`
-}
-
 type stream struct {
-	Data streamData `json:"data"`
+	ID           string   `njson:"data.0.id"`
+	UserID       string   `njson:"data.0.user_id"`
+	UserName     string   `njson:"data.0.user_name"`
+	GameID       string   `njson:"data.0.game_id"`
+	Type         string   `njson:"data.0.type"`
+	Title        string   `njson:"data.0.title"`
+	ViewerCount  string   `njson:"data.0.viewer_count"`
+	StartedAt    string   `njson:"data.0.started_at"`
+	Language     string   `njson:"data.0.language"`
+	ThumbnailURL string   `njson:"data.0.thumbnail_url"`
+	TagIDs       []string `njson:"data.0.tag_ids"`
 }
 
 func getAPIInfo(endPointAndParams string) string {
@@ -58,7 +50,5 @@ func getAPIInfo(endPointAndParams string) string {
 	checkError(err)
 	body, _ := ioutil.ReadAll(resp.Body)
 	apiJSON := string(body)
-	apiJSON = strings.ReplaceAll(apiJSON, "[", "")
-	apiJSON = strings.ReplaceAll(apiJSON, "]", "")
 	return apiJSON
 }

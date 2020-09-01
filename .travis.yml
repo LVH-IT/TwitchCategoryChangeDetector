@@ -1,2 +1,4 @@
 os: windows
 language: go
+go:
+- "1.15"

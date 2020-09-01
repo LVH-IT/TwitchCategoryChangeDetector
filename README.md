@@ -1,6 +1,4 @@
 # Twitch Category Change Detector
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FG4mer1808%2FTwitchCategoryChangeDetector.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FG4mer1808%2FTwitchCategoryChangeDetector?ref=badge_large)
-
 
 ## What does it do?
 This program simply checks the current category of a twitch streamer and notifies you as soon as it changes.  

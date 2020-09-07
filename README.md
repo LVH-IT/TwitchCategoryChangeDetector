@@ -10,7 +10,7 @@ But if you want you can also compile the code yourself as explained below.
 
 
 ### How to setup
-The executable needs an audio file in the same directory called "juntos.ogg" in order to notify the user of a category change, but you can also change the audio filename in the config.json file.  
+The executable needs an audio file in it's directory called "juntos.ogg" in order to notify the user of a category change, but you can also change the audio filename in the config.json file.  
 Your audio file has to use the vorbis codec however (usually .ogg files) or the program will not work.  
 I got my sound from here: https://notificationsounds.com/message-tones/juntos-607  
 
@@ -24,7 +24,7 @@ curl -X POST "https://id.twitch.tv/oauth2/token?client_id=PUTYOURCLIENTIDHERE&cl
 
 Just replace "PUTYOURCLIENTIDHERE" and "PUTYOURCLIENTSECRETHERE" whith the actual information you got before.  
 You will then find your bearer token in the response and you can put it into the config.json file.  
-Just keep in mind that your bearer token will expire after the amount of time given in the curl response and you will have to get a now one.  
+Just keep in mind that your bearer token will expire after the amount of time given in the curl response and you will have to get a new one.  
 
 You are now done and you can use quickstart.bat to start monitoring a twitch channel.
 
@@ -38,12 +38,11 @@ You are now done and you can use quickstart.bat to start monitoring a twitch cha
 
 ## Compilation
 ### Prerequisites for compilation
-GO  (https://golang.org/dl/)  
+Go 1.15 (https://golang.org/dl/)  
 You get the rest when trying to compile  
 
 
 ### How to compile
-Open a command prompt in the source directory and simply type "go build"  
-It will then try to compile and tell you which dependencies are missing.  
-You need to install them each like this: "go get github.com/faiface/beep"  
-And rerun "go build" until there are no more errors and your executable should be compiled in the source directory.  
+Open a command prompt in the source directory and you should be able to install all dependencies by executing this command inside the source folder: "go get -d ./..." Then simply type "go build". It will then try to compile and tell you wether there are dependencies which are still missing.
+You need to install them each like this as an example: "go get github.com/faiface/beep"  
+Then rerun "go build" until there are no more errors and your executable should be compiled in the source directory.  

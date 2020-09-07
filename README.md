@@ -19,9 +19,9 @@ To do so you have to create a twtich application: https://dev.twitch.tv/console/
 You will then get a client id (which you need to put into the config.json file) and a client secret for the application you created.  
 Then you can get a bearer token that matches your client id by using curl for example.  
 To do that simply open a command prompt and type:  
-
+```sh
 curl -X POST "https://id.twitch.tv/oauth2/token?client_id=PUTYOURCLIENTIDHERE&client_secret=PUTYOURCLIENTSECRETHERE&grant_type=client_credentials"  
-
+```
 Just replace "PUTYOURCLIENTIDHERE" and "PUTYOURCLIENTSECRETHERE" whith the actual information you got before.  
 You will then find your bearer token in the response and you can put it into the config.json file.  
 Just keep in mind that your bearer token will expire after the amount of time given in the curl response and you will have to get a new one.  
@@ -31,18 +31,32 @@ You are now done and you can use quickstart.bat to start monitoring a twitch cha
 
 ### Flags you can use
 -s  
-  accepts the name of the twitch channel (ex: -s xqcow) default is xqcow  
+  accepts the name of the twitch channel (ex: -s xqcow), default is xqcow  
   
 -t  
-  accepts the interval in which to recheck the stream category in seconds (ex: -t 10) default is 10  
+  accepts the interval in which to recheck the stream category in seconds (ex: -t 10), default is 10  
 
 ## Compilation
 ### Prerequisites for compilation
 Go 1.15 (https://golang.org/dl/)  
-You get the rest when trying to compile  
+You'll get the rest when trying to compile  
 
 
 ### How to compile
-Open a command prompt in the source directory and you should be able to install all dependencies by executing this command inside the source folder: "go get -d ./..." Then simply type "go build". It will then try to compile and tell you wether there are dependencies which are still missing.
-You need to install them each like this as an example: "go get github.com/faiface/beep"  
-Then rerun "go build" until there are no more errors and your executable should be compiled in the source directory.  
+Open a command prompt in the source directory and you should be able to install all dependencies by executing this command inside the source folder: 
+```sh
+go get -d ./...
+```
+Then simply type:
+```sh
+go build
+```
+It will then try to compile and tell you wether there are dependencies which are still missing.
+If so, you need to install them each like this: 
+```sh
+go get github.com/faiface/beep
+```
+Then rerun the following and your executable should be compiled in the source directory.
+```sh
+go build
+```

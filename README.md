@@ -15,7 +15,7 @@ Your audio file has to use the vorbis codec however (usually .ogg files) or the 
 I got my sound from here: https://notificationsounds.com/message-tones/juntos-607  
 
 In the config file you have to set a bearer token and a client id to use the twitch api.  
-To do so you have to create a twtich application: https://dev.twitch.tv/console/apps  
+To do so you have to create a twitch application: https://dev.twitch.tv/console/apps  
 You will then get a client id (which you need to put into the config.json file) and a client secret for the application you created.  
 Then you can get a bearer token that matches your client id by using curl for example.  
 To do that simply open a command prompt and type:  

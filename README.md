@@ -1,7 +1,7 @@
 # Twitch Category Change Detector
 
-## What does it do?
-This program simply checks the current category of a twitch streamer and notifies you as soon as it changes.  
+## What does it do and why?
+This program simply checks the current category of a twitch streamer and notifies you as soon as it changes, so you don't have to manually check until there is a category you like to watch. It is also way more resource friendly than having a browser open in the background to check categories.
 
 
 ## Usage
@@ -60,3 +60,11 @@ Then rerun the following and your executable should be compiled in the source di
 ```sh
 go build
 ```
+
+
+## Roadmap
+### Potential Features to come:
+* Manage multiple streams within one CLI
+  * Add / Remove Streams while running
+* GUI
+  * All the Features in a GUI

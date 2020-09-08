@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
 	"time"
 
@@ -39,14 +40,22 @@ func main() {
 		fmt.Printf("Game name found\n")
 	}
 
-	fmt.Printf("Channel to monitor: " + streamInfo.UserName + "\n")
-	fmt.Printf("Current Category: " + oldGameName + "\nWaiting for change (Checking every " + fmt.Sprint(retryInterval) + "s)\n")
+	startTime := time.Now()
+	elapsed := time.Since(startTime)
+	fmt.Println("Channel to monitor: " + streamInfo.UserName)
+	fmt.Println("Current Category: " + oldGameName)
 	for oldGameID == newGameID {
-		waitRetryInterval()
+		for int(elapsed.Seconds()) < retryInterval {
+			fmt.Printf("\rWaiting for change (Rechecking in %ds) ", (retryInterval - int(elapsed.Seconds())))
+			time.Sleep(1e9) //sleep for 1000000000ns = 1000ms = 1s
+			elapsed = time.Since(startTime)
+		}
 		getStreamInfoWithOnlineCheck()
 		newGameID = streamInfo.GameID
+		startTime = time.Now()
+		elapsed = time.Since(startTime)
 	}
-
+	println()
 	newGameName := getGameInfo(newGameID).Name
 	if newGameName == "" {
 		fmt.Printf("Game name not found. Retrying in: " + fmt.Sprint(retryInterval) + "s\n")
@@ -91,7 +100,7 @@ func getStreamInfoWithOnlineCheck() {
 
 func waitRetryInterval() {
 	startTime := time.Now()
-	elapsed := int(time.Since(startTime))
+	elapsed := int(time.Since(startTime).Seconds())
 	for elapsed < retryInterval {
 		time.Sleep(1000000000) //sleep for 1000000000ns = 1000ms = 1s
 		elapsed = int(time.Since(startTime).Seconds())
@@ -102,4 +111,11 @@ func parseFlags() {
 	flag.StringVar(&streamName, "c", "xqcow", "provide the name of the twitch channel")
 	flag.IntVar(&retryInterval, "t", 10, "provide the interval (in seconds) in which to refresh the stream's information")
 	flag.Parse()
+}
+
+func checkError(errorVar error) {
+	if errorVar != nil {
+		log.Fatal(errorVar)
+		os.Exit(1)
+	}
 }

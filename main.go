@@ -31,22 +31,22 @@ func main() {
 	checkAPIToken()
 	getStreamInfoWithOnlineCheck()
 	wasOnline = true
-	oldGameID := streamInfo.GameID
-	oldGameName := getGameInfo(oldGameID).Name
-	newGameID := streamInfo.GameID
+	oldGameID := streamInfo.Data[0].GameID
+	oldGameName := getGameInfo(oldGameID).Data[0].Name
+	newGameID := streamInfo.Data[0].GameID
 
 	if oldGameName == "" {
 		fmt.Printf("Game name not found. Retrying in: " + fmt.Sprint(retryInterval) + "s\n")
 		for oldGameName == "" {
 			waitRetryInterval()
-			oldGameName = getGameInfo(oldGameID).Name
+			oldGameName = getGameInfo(oldGameID).Data[0].Name
 		}
 		fmt.Printf("Game name found\n")
 	}
 
 	startTime := time.Now()
 	elapsed := time.Since(startTime)
-	fmt.Println("Channel to monitor: " + streamInfo.UserName)
+	fmt.Println("Channel to monitor: " + streamInfo.Data[0].UserName)
 	fmt.Println("Current Category: " + oldGameName)
 
 	for oldGameID == newGameID {
@@ -58,7 +58,7 @@ func main() {
 		routineDone <- false
 		go func() {
 			getStreamInfoWithOnlineCheck()
-			newGameID = streamInfo.GameID
+			newGameID = streamInfo.Data[0].GameID
 			routineDone <- true
 		}()
 		for <-routineDone == false {
@@ -74,12 +74,12 @@ func main() {
 	}
 
 	println()
-	newGameName := getGameInfo(newGameID).Name
+	newGameName := getGameInfo(newGameID).Data[0].Name
 	if newGameName == "" {
 		fmt.Printf("Game name not found. Retrying in: " + fmt.Sprint(retryInterval) + "s\n")
 		for newGameName == "" {
 			waitRetryInterval()
-			newGameName = getGameInfo(oldGameID).Name
+			newGameName = getGameInfo(oldGameID).Data[0].Name
 		}
 		fmt.Printf("Game name found\n")
 	}
@@ -105,22 +105,22 @@ func playSound() {
 
 func getStreamInfoWithOnlineCheck() {
 	streamInfo = getStreamInfo(streamName)
-	if streamInfo.StartedAt == "" {
+	if streamInfo.Data[0].StartedAt == "" {
 		if wasOnline == true {
-			time.Sleep(2e9)                        //Wait a bit and check again to make sure the stream actually went offline (The API needs some seconds to update every server's cache)
-			streamInfo = getStreamInfo(streamName) //
-			if streamInfo.StartedAt == "" {        //
+			time.Sleep(2e9)                         //Wait a bit and check again to make sure the stream actually went offline (The API needs some seconds to update every server's cache)
+			streamInfo = getStreamInfo(streamName)  //
+			if streamInfo.Data[0].StartedAt == "" { //
 				playSound()
 				fmt.Println("\n" + streamName + " just went offline. Waiting for change (Checking every " + fmt.Sprint(retryInterval) + "s)\n")
 
-				for streamInfo.StartedAt == "" {
+				for streamInfo.Data[0].StartedAt == "" {
 					waitRetryInterval()
 					streamInfo = getStreamInfo(streamName)
 				}
 			}
 		} else {
 			fmt.Printf(streamName + " is currently offline. Waiting for change (Checking every " + fmt.Sprint(retryInterval) + "s)\n")
-			for streamInfo.StartedAt == "" {
+			for streamInfo.Data[0].StartedAt == "" {
 				waitRetryInterval()
 				streamInfo = getStreamInfo(streamName)
 			}

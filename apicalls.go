@@ -6,42 +6,44 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-
-	"github.com/m7shapan/njson"
 )
 
 func getGameInfo(gameID string) game {
 	gameJSON := getAPIInfo("games?id=" + gameID)
 	var gameInfo game
-	njson.Unmarshal([]byte(gameJSON), &gameInfo)
+	json.Unmarshal([]byte(gameJSON), &gameInfo)
 	return gameInfo
 }
 
 type game struct {
-	ID        int    `njson:"data.0.id"`
-	Name      string `njson:"data.0.name"`
-	BoxArtURL string `njson:"data.0.box_art_url"`
+	Data []struct {
+		ID        string `json:"id"`
+		Name      string `json:"name"`
+		BoxArtURL string `json:"box_art_url"`
+	} `json:"data"`
 }
 
 func getStreamInfo(streamerName string) stream {
 	streamJSON := getAPIInfo("streams?user_login=" + streamerName)
 	var streamInfo stream
-	njson.Unmarshal([]byte(streamJSON), &streamInfo)
+	json.Unmarshal([]byte(streamJSON), &streamInfo)
 	return streamInfo
 }
 
 type stream struct {
-	ID           string   `njson:"data.0.id"`
-	UserID       string   `njson:"data.0.user_id"`
-	UserName     string   `njson:"data.0.user_name"`
-	GameID       string   `njson:"data.0.game_id"`
-	Type         string   `njson:"data.0.type"`
-	Title        string   `njson:"data.0.title"`
-	ViewerCount  string   `njson:"data.0.viewer_count"`
-	StartedAt    string   `njson:"data.0.started_at"`
-	Language     string   `njson:"data.0.language"`
-	ThumbnailURL string   `njson:"data.0.thumbnail_url"`
-	TagIDs       []string `njson:"data.0.tag_ids"`
+	Data []struct {
+		ID           string   `json:"id"`
+		UserID       string   `json:"user_id"`
+		UserName     string   `json:"user_name"`
+		GameID       string   `json:"game_id"`
+		Type         string   `json:"type"`
+		Title        string   `json:"title"`
+		ViewerCount  string   `json:"viewer_count"`
+		StartedAt    string   `json:"started_at"`
+		Language     string   `json:"language"`
+		ThumbnailURL string   `json:"thumbnail_url"`
+		TagIDs       []string `json:"tag_ids"`
+	} `json:"data"`
 }
 
 func getAPIInfo(endPointAndParams string) string {
@@ -57,12 +59,12 @@ func getAPIInfo(endPointAndParams string) string {
 }
 
 type apiValidation struct {
-	Error     string   `njson:"error"`
-	Status    int      `njson:"status"`
-	Message   string   `njson:"message"`
-	ClientID  string   `njson:"client_id"`
-	Scopes    []string `njson:"scopes"`
-	ExpiresIn int      `njson:"expires_in"`
+	Error     string   `json:"error"`
+	Status    int      `json:"status"`
+	Message   string   `json:"message"`
+	ClientID  string   `json:"client_id"`
+	Scopes    []string `json:"scopes"`
+	ExpiresIn int      `json:"expires_in"`
 }
 
 type apiToken struct {
@@ -81,7 +83,7 @@ func checkAPIToken() {
 	body, _ := ioutil.ReadAll(resp.Body)
 	apiJSON := string(body)
 	var APIInfo apiValidation
-	njson.Unmarshal([]byte(apiJSON), &APIInfo)
+	json.Unmarshal([]byte(apiJSON), &APIInfo)
 
 	if APIInfo.Error != "" {
 		println("Error " + fmt.Sprint(APIInfo.Status) + " (" + APIInfo.Error + "): " + APIInfo.Message)

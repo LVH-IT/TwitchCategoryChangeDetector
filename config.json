@@ -1,5 +1,6 @@
 {
     "BearerToken": "",
     "ClientID": "",
+    "ClientSecret": "",
     "SoundFile": "juntos.ogg"
 }

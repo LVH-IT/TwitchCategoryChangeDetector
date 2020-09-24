@@ -13,9 +13,10 @@ import (
 )
 
 //Some globally used variables
-var bearerToken string //loaded via loadConfig()
-var clientID string    //loaded via loadConfig()
-var soundFile string   //loaded via loadConfig()
+var bearerToken string  //loaded via loadConfig()
+var clientID string     //loaded via loadConfig()
+var soundFile string    //loaded via loadConfig()
+var clientSecret string //loaded via loadConfig()
 var streamInfo stream
 var routineDone (chan bool) = make(chan bool, 1)
 var wasOnline (bool) = false
@@ -27,6 +28,7 @@ var retryInterval int
 func main() {
 	parseFlags()
 	loadConfig()
+	checkAPIToken()
 	getStreamInfoWithOnlineCheck()
 	wasOnline = true
 	oldGameID := streamInfo.GameID

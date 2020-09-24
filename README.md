@@ -18,6 +18,7 @@ I got my sound from here: https://notificationsounds.com/message-tones/juntos-60
 
 In the config file you have to set a client id and a client secret to use the twitch api.  
 To do so you have to create a twitch application: https://dev.twitch.tv/console/apps  
+You can call the application whatever you want. For "OAuth Redirect URLs" just use "http://localhost" or something, as this value is irrelevant. For the Category you should choose "Application Integration"  
 You will then get a client id and a client secret for the application you created. You need to put both of these into your config.json file.
 
 You are now done and you can use quickstart.bat to start monitoring a twitch channel. When it asks you wether to get a new Token, just type "y" to get one. In case it fails to get a Token go to the "Solving errors" section down below.

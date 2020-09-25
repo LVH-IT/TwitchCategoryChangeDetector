@@ -5,11 +5,35 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"os"
 )
 
-func getGameInfo(gameID string) game {
-	gameJSON := getAPIInfo("games?id=" + gameID)
+func getWhitelistGameIDs() []string {
+	var params (string) = "games?"
+	var gameJSON string
+	var gameIDs []string
+	for a, b := range categories {
+		if a == 0 {
+			params += "name=" + url.QueryEscape(b)
+		} else {
+			params += "&name=" + url.QueryEscape(b)
+		}
+	}
+	gameJSON = getAPIInfo(params)
+	var gameInfo game
+	json.Unmarshal([]byte(gameJSON), &gameInfo)
+	for a := range gameInfo.Data {
+		gameIDs = append(gameIDs, gameInfo.Data[a].ID)
+	}
+	return gameIDs
+}
+
+func getGameInfo(streamDataJSON stream) game {
+	var params (string) = "games?"
+	var gameJSON string
+	params += "id=" + streamDataJSON.Data[0].GameID
+	gameJSON = getAPIInfo(params)
 	var gameInfo game
 	json.Unmarshal([]byte(gameJSON), &gameInfo)
 	return gameInfo
@@ -23,26 +47,25 @@ type game struct {
 	} `json:"data"`
 }
 
-func getStreamInfo(streamerName string) stream {
-	streamJSON := getAPIInfo("streams?user_login=" + streamerName)
-	var streamInfo stream
+func getStreamInfo() stream {
+	var params (string) = "search/channels?first=1"
+	params += "&query=" + streamName
+	streamJSON := getAPIInfo(params)
 	json.Unmarshal([]byte(streamJSON), &streamInfo)
 	return streamInfo
 }
 
 type stream struct {
 	Data []struct {
-		ID           string   `json:"id"`
-		UserID       string   `json:"user_id"`
-		UserName     string   `json:"user_name"`
-		GameID       string   `json:"game_id"`
-		Type         string   `json:"type"`
-		Title        string   `json:"title"`
-		ViewerCount  string   `json:"viewer_count"`
-		StartedAt    string   `json:"started_at"`
-		Language     string   `json:"language"`
-		ThumbnailURL string   `json:"thumbnail_url"`
-		TagIDs       []string `json:"tag_ids"`
+		BroadcasterLanguage string   `json:"broadcaster_language"`
+		DisplayName         string   `json:"display_name"`
+		GameID              string   `json:"game_id"`
+		ID                  string   `json:"id"`
+		Islive              bool     `json:"is_live"`
+		TagIDs              []string `json:"tag_ids"`
+		ThumbnailURL        string   `json:"thumbnail_url"`
+		Title               string   `json:"title"`
+		StartedAt           string   `json:"started_at"`
 	} `json:"data"`
 }
 

@@ -1,6 +1,8 @@
 {
     "BearerToken": "",
-    "ClientID": "",
-    "ClientSecret": "",
-    "SoundFile": "juntos.ogg"
+    "ClientID": "CHANGE",
+    "ClientSecret": "CHANGE",
+    "SoundFile": "juntos.ogg",
+    "UseCategoryWhitelist": true,
+    "Categories": ["Watch Parties","Just Chatting"]
 }

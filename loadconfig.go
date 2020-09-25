@@ -8,10 +8,12 @@ import (
 )
 
 type config struct {
-	BearerToken  string `json:"BearerToken"`
-	ClientID     string `json:"ClientID"`
-	ClientSecret string `json:"ClientSecret"`
-	SoundFile    string `json:"SoundFile"`
+	BearerToken          string   `json:"BearerToken"`
+	ClientID             string   `json:"ClientID"`
+	ClientSecret         string   `json:"ClientSecret"`
+	SoundFile            string   `json:"SoundFile"`
+	UseCategoryWhitelist bool     `json:"UseCategoryWhitelist"`
+	Categories           []string `json:"Categories"`
 }
 
 func loadConfig() {
@@ -23,6 +25,8 @@ func loadConfig() {
 	clientID = configData.ClientID
 	clientSecret = configData.ClientSecret
 	soundFile = configData.SoundFile
+	useCategoryWhitelist = configData.UseCategoryWhitelist
+	categories = configData.Categories
 
 	if len(clientID) != 30 {
 		fmt.Println("The provided Client ID is invalid")

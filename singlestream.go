@@ -32,32 +32,30 @@ func singleStream() {
 			newGameID = newStreamInfo.Data[0].GameID
 			routineDone = true
 		}()
+
 		for routineDone == false {
-			if routineDone == false {
-				fmt.Printf("\rWaiting for change (Rechecking      ) ")
-				time.Sleep(2e8)
+			for i := 1; i <= 6; i++ {
 				if routineDone == false {
-					fmt.Printf("\rWaiting for change (Rechecking  .   ) ")
-					time.Sleep(2e8)
-					if routineDone == false {
+					if i == 1 {
+						fmt.Printf("\rWaiting for change (Rechecking      ) ")
+						time.Sleep(2e8)
+					}
+					if i == 2 || i == 6 {
+						fmt.Printf("\rWaiting for change (Rechecking  .   ) ")
+						time.Sleep(2e8)
+					}
+					if i == 3 || i == 5 {
 						fmt.Printf("\rWaiting for change (Rechecking  ..  ) ")
 						time.Sleep(2e8)
-						if routineDone == false {
-							fmt.Printf("\rWaiting for change (Rechecking  ... ) ")
-							time.Sleep(2e8)
-							if routineDone == false {
-								fmt.Printf("\rWaiting for change (Rechecking  ..  ) ")
-								time.Sleep(2e8)
-								if routineDone == false {
-									fmt.Printf("\rWaiting for change (Rechecking  .   ) ")
-									time.Sleep(2e8)
-								}
-							}
-						}
+					}
+					if i == 4 {
+						fmt.Printf("\rWaiting for change (Rechecking  ... ) ")
+						time.Sleep(2e8)
 					}
 				}
 			}
 		}
+
 		startTime = time.Now()
 		elapsed = time.Since(startTime)
 	}

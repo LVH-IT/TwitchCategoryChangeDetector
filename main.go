@@ -21,7 +21,7 @@ var useCategoryWhitelist bool //loaded via loadConfig()
 var categories []string       //loaded via loadConfig()
 var streamInfo stream
 var routineDone bool
-var wasOnline (bool) = false
+var wasOnline bool = false
 var oldGameName string
 var newGameID string
 var oldGameID string
@@ -36,9 +36,7 @@ var retryInterval int = 10
 
 func main() {
 	loadConfig()
-	//if !useChannelsFromConfig {
 	parseFlags()
-	//}
 	checkAPIToken()
 	streamInfo = getStreamInfoWithOnlineCheck()
 	wasOnline = true
@@ -48,7 +46,9 @@ func main() {
 		time.Sleep(1e9)
 		oldGameInfo = getGameInfo(streamInfo)
 	}
-	whitelistGameIDs = getWhitelistGameIDs()
+	if useCategoryWhitelist {
+		whitelistGameIDs = getWhitelistGameIDs()
+	}
 	singleStream()
 }
 

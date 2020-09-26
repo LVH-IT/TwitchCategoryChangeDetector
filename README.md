@@ -24,11 +24,16 @@ You will then get a client id and a client secret for the application you create
 You are now done and you can use quickstart.bat to start monitoring a twitch channel. When it asks you wether to get a new Token, just type "y" to get one. In case it fails to get a Token go to the "Solving errors" section down below.
 
 ### Flags you can use
--s  
-  accepts the name of the twitch channel (ex: -s xqcow), default is xqcow  
-  
--t  
-  accepts the interval in which to recheck the stream category in seconds (ex: -t 10), default is 10  
+* **-s** :   accepts the name of the twitch channel (ex: -s xqcow), default is xqcow  
+* **-t** :   accepts the interval in which to recheck the stream category in seconds (ex: -t 10), default is 10  
+
+### Config changes you can make
+* **BearerToken** : You can either manually get one, as described [here](#automatic-bearer-token-retrieval-fails), or let the application do it for you  
+* **ClientID** : You have to fill this in yourself for now, as described here: [How to setup](#how-to-setup)
+* **ClientSecret** : You have to also fill this in yourself for now, as described here: [How to setup](#how-to-setup)
+* **SoundFile** : This has to be the filename of your audiofile. Default: "juntos.ogg"  
+* **UseCategoryWhitelist** : If you only want to be notified when a streamer changes to a specific category of your choice, set this to true and also change the next config entry  
+* **Categories** : Here you can list the categories you want to whitelist. Default: ["Watch Parties","Just Chatting"]  
 
 ## Compilation
 ### Prerequisites for compilation

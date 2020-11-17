@@ -1,6 +1,6 @@
 # Twitch Category Change Detector
 This package mostly uses native go packages, except for these external dependencies:
-* [beep](https://github.com/faiface/beep), which is licenced under an [MIT-like](https://github.com/faiface/beep/blob/master/LICENSE) licence. This package is used for playing audio files.
+* [beep](https://github.com/faiface/beep), which is licenced under an [MIT-like](https://github.com/faiface/beep/blob/master/LICENSE) license. This package is used for playing audio files.
 
 ## What does it do and why?
 This program simply checks the current category of a twitch streamer and notifies you as soon as it changes, so you don't have to manually check until there is a category you like to watch. It is also way more resource friendly than having a browser open in the background to check categories.

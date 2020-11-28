@@ -8,12 +8,14 @@ import (
 )
 
 type config struct {
-	BearerToken          string   `json:"BearerToken"`
-	ClientID             string   `json:"ClientID"`
-	ClientSecret         string   `json:"ClientSecret"`
-	SoundFile            string   `json:"SoundFile"`
-	UseCategoryWhitelist bool     `json:"UseCategoryWhitelist"`
-	Categories           []string `json:"Categories"`
+	BearerToken                string   `json:"BearerToken"`
+	ClientID                   string   `json:"ClientID"`
+	ClientSecret               string   `json:"ClientSecret"`
+	SoundFile                  string   `json:"SoundFile"`
+	UseCategoryWhitelist       bool     `json:"UseCategoryWhitelist"`
+	Categories                 []string `json:"Categories"`
+	NotifyOnOfflineTitleChange bool     `json:"NotifyOnOfflineTitleChange"`
+	NotifyOnOnlineTitleChange  bool     `json:"NotifyOnOnlineTitleChange"`
 }
 
 func loadConfig() {
@@ -27,6 +29,8 @@ func loadConfig() {
 	soundFile = configData.SoundFile
 	useCategoryWhitelist = configData.UseCategoryWhitelist
 	categories = configData.Categories
+	notifyOnOfflineTitleChange = configData.NotifyOnOfflineTitleChange
+	notifyOnOnlineTitleChange = configData.NotifyOnOnlineTitleChange
 
 	if len(clientID) != 30 {
 		fmt.Println("The provided Client ID is invalid")

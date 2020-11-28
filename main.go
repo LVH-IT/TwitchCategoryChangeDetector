@@ -13,12 +13,14 @@ import (
 )
 
 //Some globally used variables
-var bearerToken string        //loaded via loadConfig()
-var clientID string           //loaded via loadConfig()
-var soundFile string          //loaded via loadConfig()
-var clientSecret string       //loaded via loadConfig()
-var useCategoryWhitelist bool //loaded via loadConfig()
-var categories []string       //loaded via loadConfig()
+var bearerToken string              //loaded via loadConfig()
+var clientID string                 //loaded via loadConfig()
+var soundFile string                //loaded via loadConfig()
+var clientSecret string             //loaded via loadConfig()
+var useCategoryWhitelist bool       //loaded via loadConfig()
+var categories []string             //loaded via loadConfig()
+var notifyOnOfflineTitleChange bool //loaded via loadConfig()
+var notifyOnOnlineTitleChange bool  //loaded via loadConfig()
 var streamInfo stream
 var routineDone bool
 var wasOnline bool = false
@@ -29,6 +31,8 @@ var oldGameInfo game
 var newGameName string
 var newStreamInfo stream
 var whitelistGameIDs []string
+var oldTitle string
+var newTitle string
 
 //Definitions of all the flags
 var streamName string
@@ -69,7 +73,10 @@ func playSound() {
 
 func getStreamInfoWithOnlineCheck() stream {
 	var tempStreamInfo (stream)
+	var offlineOldTitle string
+	var offlineNewTitle string
 	tempStreamInfo = getStreamInfo()
+	offlineOldTitle = tempStreamInfo.Data[0].Title
 	if len(tempStreamInfo.Data) != 0 {
 		if tempStreamInfo.Data[0].Islive == false {
 			if wasOnline == true {
@@ -90,6 +97,12 @@ func getStreamInfoWithOnlineCheck() stream {
 				for tempStreamInfo.Data[0].Islive == false {
 					waitRetryInterval()
 					tempStreamInfo = getStreamInfo()
+					offlineNewTitle = tempStreamInfo.Data[0].Title
+					if offlineOldTitle != offlineNewTitle && notifyOnOfflineTitleChange {
+						fmt.Println("Title changed to: " + offlineNewTitle)
+						offlineOldTitle = offlineNewTitle
+						playSound()
+					}
 				}
 				fmt.Printf(streamName + " just went online\n")
 				playSound()

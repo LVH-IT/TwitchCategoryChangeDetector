@@ -34,6 +34,8 @@ You are now done and you can use quickstart.bat to start monitoring a twitch cha
 * **SoundFile** : This has to be the filename of your audiofile. Default: "juntos.ogg"  
 * **UseCategoryWhitelist** : If you only want to be notified when a streamer changes to a specific category of your choice, set this to true and also change the next config entry  
 * **Categories** : Here you can list the categories you want to whitelist. Default: ["Watch Parties","Just Chatting"]  
+* **NotifyOnOfflineTitleChange** : Notifies you when the stream title changes while the stream is offline  
+* **NotifyOnOnlineTitleChange** : Notifies you when the stream title changes while the stream is online  
 
 ## Compilation
 ### Prerequisites for compilation

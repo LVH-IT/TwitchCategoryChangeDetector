@@ -50,6 +50,10 @@ Open a command prompt in the source directory and you should be able to install 
 ```sh
 go get -d ./...
 ```
+Before compiling on linux you need a few dependencies (libasound2-dev and pkg-comfig), which you can install like this: 
+```sh
+apt install libasound2-dev pkg-config
+```
 Then simply type:
 ```sh
 go build

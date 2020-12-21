@@ -4,7 +4,10 @@
     "ClientSecret": "CHANGE",
     "SoundFile": "juntos.ogg",
     "UseCategoryWhitelist": false,
-    "Categories": ["Watch Parties","Just Chatting"],
-    "NotifyOnOfflineTitleChange" : true,
-    "NotifyOnOnlineTitleChange" : false
+    "Categories": [
+        "Watch Parties",
+        "Just Chatting"
+    ],
+    "NotifyOnOfflineTitleChange": true,
+    "NotifyOnOnlineTitleChange": false
 }

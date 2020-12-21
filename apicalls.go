@@ -129,6 +129,7 @@ func checkAPIToken() {
 			//Change Token and write it to config.json
 			configData.BearerToken = TokenResponse.AccessToken
 			configBytes, err := json.MarshalIndent(configData, "", "    ")
+			checkError(err)
 			err = ioutil.WriteFile("config.json", configBytes, 0644)
 			checkError(err)
 
@@ -158,7 +159,7 @@ func getNewAPITokenJSON() apiToken {
 
 	//Check Responsse for validity
 	if len(TokenResponse.AccessToken) != 30 {
-		fmt.Println("Could not obtain a new Bearer Access Token. Please try again or get one manually")
+		println("Could not obtain a new Bearer Access Token. Please try again or get one manually")
 		os.Exit(1)
 	}
 	return TokenResponse

@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
 )
@@ -23,6 +22,13 @@ func loadConfig() {
 	checkError(err)
 	var configData config
 	json.Unmarshal([]byte(string(configFile)), &configData)
+
+	//Making the json file pretty
+	configBytes, err := json.MarshalIndent(configData, "", "    ")
+	checkError(err)
+	err = ioutil.WriteFile("config.json", configBytes, 0644)
+	checkError(err)
+
 	bearerToken = configData.BearerToken
 	clientID = configData.ClientID
 	clientSecret = configData.ClientSecret
@@ -33,11 +39,11 @@ func loadConfig() {
 	notifyOnOnlineTitleChange = configData.NotifyOnOnlineTitleChange
 
 	if len(clientID) != 30 {
-		fmt.Println("The provided Client ID is invalid")
+		println("The provided Client ID is invalid")
 		os.Exit(1)
 	}
 	if len(clientSecret) != 30 {
-		fmt.Println("The provided Client Secret is invalid")
+		println("The provided Client Secret is invalid")
 		os.Exit(1)
 	}
 

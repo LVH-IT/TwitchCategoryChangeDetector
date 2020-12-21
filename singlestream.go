@@ -7,41 +7,45 @@ import (
 
 func singleStream() {
 	oldGameID = streamInfo.Data[0].GameID
-	oldTitle := streamInfo.Data[0].Title
-	newTitle := oldTitle
+	oldTitle = streamInfo.Data[0].Title
+	newTitle = oldTitle
 	if len(oldGameInfo.Data) == 0 {
 		oldGameName = "Game name not found"
 	} else {
 		oldGameName = oldGameInfo.Data[0].Name
 		newGameID = streamInfo.Data[0].GameID
 	}
-
-	fmt.Println("----------------------------------------------------")
-	fmt.Println("Channel to monitor: " + streamInfo.Data[0].DisplayName)
-	fmt.Println("Current Category: " + oldGameName)
-	fmt.Println("Current Title: " + oldTitle)
+	println("----------------------------------------------------")
+	println("Channel to monitor: " + streamInfo.Data[0].DisplayName)
+	println("Current Category: " + oldGameName)
+	println("Current Title: " + oldTitle)
 
 	startTime := time.Now()
 	elapsed := time.Since(startTime)
-	for oldGameID == newGameID && streamInfo.Data[0].Islive && oldTitle == newTitle {
+	newStreamInfo = streamInfo
+	for oldGameID == newGameID && newStreamInfo.Data[0].Islive && oldTitle == newTitle {
 		for int(elapsed.Seconds()) < retryInterval {
 			fmt.Printf("\rWaiting for change (Rechecking in %ds) ", (retryInterval - int(elapsed.Seconds())))
 			time.Sleep(1e9) //sleep for 1000000000ns = 1000ms = 1s
 			elapsed = time.Since(startTime)
 		}
 		routineDone = false
+
 		go func() {
-			newStreamInfo = getStreamInfoWithOnlineCheck()
-			newGameID = newStreamInfo.Data[0].GameID
-			if notifyOnOnlineTitleChange {
+			if initOnline == 6 {
+				newStreamInfo = getStreamInfo()
+				newGameID = newStreamInfo.Data[0].GameID
 				newTitle = newStreamInfo.Data[0].Title
+			}
+			if initOnline < 6 {
+				initOnline++
 			}
 			routineDone = true
 		}()
 
-		for routineDone == false {
+		for !routineDone {
 			for i := 1; i <= 6; i++ {
-				if routineDone == false {
+				if !routineDone {
 					if i == 1 {
 						fmt.Printf("\rWaiting for change (Rechecking      ) ")
 					}
@@ -62,30 +66,26 @@ func singleStream() {
 		startTime = time.Now()
 		elapsed = time.Since(startTime)
 	}
+
+	clearCLI()
+	soundPlayed := false
+
 	if oldGameID != newGameID {
 		if useCategoryWhitelist {
+			newGameInfo := getGameInfo(newStreamInfo)
 			for _, b := range whitelistGameIDs {
 				if newGameID == b {
-					newGameInfo := getGameInfo(newStreamInfo)
-					if len(newGameInfo.Data) == 0 {
-						newGameName = "Game name not found"
-					} else {
-						newGameName = newGameInfo.Data[0].Name
-					}
-					println()
-					fmt.Printf("Category changed to: " + newGameName + "\n")
 					playSound()
-					return
+					soundPlayed = true
+					continue
 				}
 			}
-			newGameInfo := getGameInfo(newStreamInfo)
 			if len(newGameInfo.Data) == 0 {
 				newGameName = "Game name not found"
 			} else {
 				newGameName = newGameInfo.Data[0].Name
 			}
-			println()
-			fmt.Printf("Category changed to: " + newGameName + "\n")
+			println("Category changed to: " + newGameName)
 		} else {
 			newGameInfo := getGameInfo(newStreamInfo)
 			if len(newGameInfo.Data) == 0 {
@@ -93,14 +93,16 @@ func singleStream() {
 			} else {
 				newGameName = newGameInfo.Data[0].Name
 			}
-			println()
-			fmt.Printf("Category changed to: " + newGameName + "\n")
+
+			println("Category changed to: " + newGameName)
 			playSound()
+			soundPlayed = true
 		}
 	}
-	if oldTitle != newTitle && notifyOnOnlineTitleChange {
-		println()
-		fmt.Printf("Title changed to: " + newTitle + "\n")
-		playSound()
+	if oldTitle != newTitle {
+		println("Title changed to: " + newTitle)
+		if !soundPlayed && notifyOnOnlineTitleChange {
+			playSound()
+		}
 	}
 }

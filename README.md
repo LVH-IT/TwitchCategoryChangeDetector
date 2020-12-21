@@ -7,11 +7,13 @@ This program simply checks the current category of a twitch streamer and notifie
 
 
 ## Usage
-Download the latest release and contine with "How to setup". There are no prerequisites when using the already compiled binary file.  
-But if you want you can also compile the code yourself as explained below.  
-
+### Supported Operating Systems
+Linux and Windows only  
 
 ### How to setup
+There are no prerequisites when using the precompiled binary file, which you can download from the releases section.  
+Though if you want you can also compile the code yourself as explained below.  
+
 The executable needs an audio file in it's directory called "juntos.ogg" in order to notify the user of a category change, but you can also change the audio filename in the config.json file.  
 Your audio file has to use the vorbis codec however (usually .ogg files) or the program will not work.  
 I got my sound from here: https://notificationsounds.com/message-tones/juntos-607  
@@ -21,7 +23,7 @@ To do so you have to create a twitch application: https://dev.twitch.tv/console/
 You can call the application whatever you want. For "OAuth Redirect URLs" just use "http://localhost" or something, as this value is irrelevant. For the Category you should choose "Application Integration"  
 You will then get a client id and a client secret for the application you created. You need to put both of these into your config.json file.
 
-You are now done and you can use quickstart.bat to start monitoring a twitch channel. When it asks you wether to get a new Token, just type "y" to get one. In case it fails to get a Token go to the "Solving errors" section down below.
+You are now done and you can use quickstart script to start monitoring a twitch channel. When it asks you wether to get a new Token, just type "y" to get one. In case it fails to get a Token go to the "Solving errors" section down below.
 
 ### Flags you can use
 * **-s** :   accepts the name of the twitch channel (ex: -s xqcow), default is xqcow  

@@ -92,32 +92,31 @@ func getStreamInfoWithOnlineCheck() stream {
 	var offlineNewTitle string
 	tempStreamInfo = getStreamInfo()
 	offlineOldTitle = tempStreamInfo.Data[0].Title
-
-	if !tempStreamInfo.Data[0].Islive {
+	if tempStreamInfo.Data[0].Islive {
+		wasOnline = true
+	} else {
 		if wasOnline {
-			if !tempStreamInfo.Data[0].Islive {
-				playSound()
-				clearCLI()
-				println(streamName + " just went offline. Waiting for change (Checking every " + fmt.Sprint(retryInterval) + "s)")
-				for !tempStreamInfo.Data[0].Islive {
-					waitRetryInterval()
-					if initOffline == 6 {
-						tempStreamInfo = getStreamInfo()
-						offlineNewTitle = tempStreamInfo.Data[0].Title
-						if offlineOldTitle != offlineNewTitle {
-							if notifyOnOfflineTitleChange {
-								playSound()
-							}
-							clearCLI()
-							println("Title changed to: " + offlineNewTitle)
-							println("----------------------------------------------------")
-							println(streamName + " just went offline. Waiting for change (Checking every " + fmt.Sprint(retryInterval) + "s)")
-							offlineOldTitle = offlineNewTitle
+			playSound()
+			clearCLI()
+			println(streamName + " just went offline. Waiting for change (Checking every " + fmt.Sprint(retryInterval) + "s)")
+			for !tempStreamInfo.Data[0].Islive {
+				waitRetryInterval()
+				if initOffline == 6 {
+					tempStreamInfo = getStreamInfo()
+					offlineNewTitle = tempStreamInfo.Data[0].Title
+					if offlineOldTitle != offlineNewTitle {
+						if notifyOnOfflineTitleChange {
+							playSound()
 						}
+						clearCLI()
+						println("Title changed to: " + offlineNewTitle)
+						println("----------------------------------------------------")
+						println(streamName + " just went offline. Waiting for change (Checking every " + fmt.Sprint(retryInterval) + "s)")
+						offlineOldTitle = offlineNewTitle
 					}
-					if initOffline < 6 {
-						initOffline++
-					}
+				}
+				if initOffline < 6 {
+					initOffline++
 				}
 			}
 		} else {

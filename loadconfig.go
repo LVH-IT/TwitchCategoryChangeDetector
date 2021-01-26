@@ -6,17 +6,6 @@ import (
 	"os"
 )
 
-type config struct {
-	BearerToken                string   `json:"BearerToken"`
-	ClientID                   string   `json:"ClientID"`
-	ClientSecret               string   `json:"ClientSecret"`
-	SoundFile                  string   `json:"SoundFile"`
-	UseCategoryWhitelist       bool     `json:"UseCategoryWhitelist"`
-	Categories                 []string `json:"Categories"`
-	NotifyOnOfflineTitleChange bool     `json:"NotifyOnOfflineTitleChange"`
-	NotifyOnOnlineTitleChange  bool     `json:"NotifyOnOnlineTitleChange"`
-}
-
 func loadConfig() {
 	configFile, err := ioutil.ReadFile("config.json")
 	checkError(err)
@@ -37,6 +26,7 @@ func loadConfig() {
 	categories = configData.Categories
 	notifyOnOfflineTitleChange = configData.NotifyOnOfflineTitleChange
 	notifyOnOnlineTitleChange = configData.NotifyOnOnlineTitleChange
+	discordBotToken = configData.DiscordBotToken
 
 	if len(clientID) != 30 {
 		println("The provided Client ID is invalid")
@@ -49,7 +39,9 @@ func loadConfig() {
 
 	checkAPIToken()
 
-	audioFile, err := os.Open(soundFile)
-	checkError(err)
-	audioFile.Close()
+	if !silentMode {
+		audioFile, err := os.Open(soundFile)
+		checkError(err)
+		audioFile.Close()
+	}
 }

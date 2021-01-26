@@ -1,6 +1,7 @@
 # Twitch Category Change Detector
 This package mostly uses native go packages, except for these external dependencies:
-* [beep](https://github.com/faiface/beep), which is licenced under an [MIT-like](https://github.com/faiface/beep/blob/master/LICENSE) license. This package is used for playing audio files.
+* [beep](https://github.com/faiface/beep), which is licenced under an [MIT-like](https://github.com/faiface/beep/blob/master/LICENSE) license. This package is used for playing audio files.  
+* [DiscordGo](https://github.com/bwmarrin/discordgo), which is licenced under a [BSD 3-Clause](https://github.com/bwmarrin/discordgo/blob/master/LICENSE) license. This package is used for communicating with discord.
 
 ## What does it do and why?
 This program simply checks the current category of a twitch streamer and notifies you as soon as it changes, so you don't have to manually check until there is a category you like to watch. It is also way more resource-friendly than having a browser open in the background to check categories.
@@ -25,9 +26,13 @@ You will then get a client id and a client secret for the application you create
 
 You are now done and you can use the quickstart script to start monitoring a twitch channel. When it asks you whether to get a new Token, just type "y" to get one. In case it fails to get a Token, go to the "Solving errors" section down below.
 
+### Discord bot
+Under development
+
 ### Flags you can use
 * **-s** :   accepts the name of the twitch channel (ex: -s xqcow), default is xqcow  
 * **-t** :   accepts the interval in which to recheck the stream category in seconds (ex: -t 10), default is 10  
+* **-dcbot** :   starts the app as a discord bot. Notifications are sent through discord and will not appear in the command line  
 
 ### Config changes you can make
 * **BearerToken** : You can either manually get one, as described [here](#automatic-bearer-token-retrieval-fails), or let the application do it for you  
@@ -38,10 +43,11 @@ You are now done and you can use the quickstart script to start monitoring a twi
 * **Categories** : Here you can list the categories you want to whitelist. Default: ["Watch Parties","Just Chatting"]  
 * **NotifyOnOfflineTitleChange** : Notifies you when the stream title changes while the stream is offline  
 * **NotifyOnOnlineTitleChange** : Notifies you when the stream title changes while the stream is online  
+* **DiscordBotToken** : A bot token for Discord is needed in order to use this app as a discord bot  
 
 ## Compilation
 ### Prerequisites for compilation
-Go 1.15 (https://golang.org/dl/)  
+Go >= 1.15 (https://golang.org/dl/)  
 You'll get the rest when trying to compile  
 
 
@@ -76,9 +82,3 @@ curl -X POST "https://id.twitch.tv/oauth2/token?client_id=PUTYOURCLIENTIDHERE&cl
 Just replace "PUTYOURCLIENTIDHERE" and "PUTYOURCLIENTSECRETHERE" with the actual information you got before.  
 You will then find your bearer token in the response and you can put it into the config.json file.  
 Just keep in mind that your bearer token will expire after the amount of time given in the curl response and you will have to get a new one, either automatically by letting the application do it or by doing it manually again in case it fails.  
-
-## Roadmap
-### Potential Features to come:
-* Manage multiple streams within one CLI
-* GUI
-  * All the Features in a GUI

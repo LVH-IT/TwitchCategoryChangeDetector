@@ -6,60 +6,89 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"os/signal"
 	"runtime"
+	"syscall"
 	"time"
+
+	"github.com/bwmarrin/discordgo"
 
 	"github.com/faiface/beep"
 	"github.com/faiface/beep/speaker"
 	"github.com/faiface/beep/vorbis"
 )
 
-//Some globally used variables
-var bearerToken string              //loaded via loadConfig()
-var clientID string                 //loaded via loadConfig()
-var soundFile string                //loaded via loadConfig()
-var clientSecret string             //loaded via loadConfig()
-var useCategoryWhitelist bool       //loaded via loadConfig()
-var categories []string             //loaded via loadConfig()
-var notifyOnOfflineTitleChange bool //loaded via loadConfig()
-var notifyOnOnlineTitleChange bool  //loaded via loadConfig()
+var (
+	//Some globally used variables
+	bearerToken                string   //
+	clientID                   string   //
+	soundFile                  string   //
+	clientSecret               string   //
+	useCategoryWhitelist       bool     //loaded via loadConfig()
+	categories                 []string //
+	notifyOnOfflineTitleChange bool     //
+	notifyOnOnlineTitleChange  bool     //
 
-var streamInfo stream
-var routineDone bool
-var wasOnline bool = false
-var oldGameName string
-var newGameID string
-var oldGameID string
-var oldGameInfo game
-var newGameName string
-var newStreamInfo stream
-var whitelistGameIDs []string
-var oldTitle string
-var newTitle string
-var initOnline = 1
-var initOffline = 1
-var hostOS = runtime.GOOS
+	streamInfo       stream
+	routineDone      bool
+	wasOnline        bool = false
+	oldGameName      string
+	newGameID        string
+	oldGameID        string
+	oldGameInfo      game
+	newGameName      string
+	newStreamInfo    stream
+	whitelistGameIDs []string
+	oldTitle         string
+	newTitle         string
+	initOnline       = 6
+	initOffline      = 6
+	hostOS           = runtime.GOOS
+	silentMode       = false
+	err              error
+	//errLogFile *os.File
 
-//Definitions of all the flags
-var streamName string
-var retryInterval int = 10
+	//Definitions of all the flags
+	streamName    string
+	retryInterval int = 10
+
+	//Discord Bot
+	discordMode     bool
+	discordBotToken string
+	bot             *discordgo.Session
+	dcChannel       dcChannels
+)
 
 func main() {
 	checkOS()
-	loadConfig()
 	parseFlags()
+	loadConfig()
 	checkAPIToken()
-	for {
-		streamInfo = getStreamInfoWithOnlineCheck()
-		oldGameInfo = getGameInfo(streamInfo)
-		for len(oldGameInfo.Data) == 0 {
-			time.Sleep(1e9)
+
+	if discordMode {
+		startDiscordBot()
+	}
+
+	go func() {
+		ctrlC()
+	}()
+	if !discordMode {
+		for {
+			streamInfo = getStreamInfoWithOnlineCheck()
 			oldGameInfo = getGameInfo(streamInfo)
+			for len(oldGameInfo.Data) == 0 {
+				time.Sleep(1e9)
+				oldGameInfo = getGameInfo(streamInfo)
+			}
+			if useCategoryWhitelist {
+				whitelistGameIDs = getWhitelistGameIDs()
+			}
+			singleStream()
 		}
-		if useCategoryWhitelist {
-			whitelistGameIDs = getWhitelistGameIDs()
+	} else {
+		for {
+			time.Sleep(1e9)
 		}
-		singleStream()
 	}
 }
 
@@ -96,22 +125,33 @@ func getStreamInfoWithOnlineCheck() stream {
 		wasOnline = true
 	} else {
 		if wasOnline {
-			playSound()
-			clearCLI()
-			println(streamName + " just went offline. Waiting for change (Checking every " + fmt.Sprint(retryInterval) + "s)")
+			if !silentMode {
+				clearCLI()
+				println(streamName + " just went offline. Waiting for change (Checking every " + fmt.Sprint(retryInterval) + "s)")
+				playSound()
+			}
+			if discordMode {
+				dcChannel.Session.ChannelMessageSend(dcChannel.ChannelID, streamName+" just went offline")
+			}
 			for !tempStreamInfo.Data[0].Islive {
 				waitRetryInterval()
 				if initOffline == 6 {
 					tempStreamInfo = getStreamInfo()
 					offlineNewTitle = tempStreamInfo.Data[0].Title
 					if offlineOldTitle != offlineNewTitle {
-						if notifyOnOfflineTitleChange {
-							playSound()
+						if !silentMode {
+							if notifyOnOfflineTitleChange {
+								playSound()
+							}
+							clearCLI()
+							println("Title changed to: " + offlineNewTitle)
+							println("----------------------------------------------------")
+							println(streamName + " just went offline. Waiting for change (Checking every " + fmt.Sprint(retryInterval) + "s)")
 						}
-						clearCLI()
-						println("Title changed to: " + offlineNewTitle)
-						println("----------------------------------------------------")
-						println(streamName + " just went offline. Waiting for change (Checking every " + fmt.Sprint(retryInterval) + "s)")
+
+						if notifyOnOfflineTitleChange && discordMode {
+							dcChannel.Session.ChannelMessageSend(dcChannel.ChannelID, streamName+" - Offline title changed to: "+offlineNewTitle)
+						}
 						offlineOldTitle = offlineNewTitle
 					}
 				}
@@ -120,20 +160,29 @@ func getStreamInfoWithOnlineCheck() stream {
 				}
 			}
 		} else {
-			println(streamName + " is currently offline. Waiting for change (Checking every " + fmt.Sprint(retryInterval) + "s)")
+			if !silentMode {
+				println(streamName + " is currently offline. Waiting for change (Checking every " + fmt.Sprint(retryInterval) + "s)")
+			}
 			for !tempStreamInfo.Data[0].Islive {
 				waitRetryInterval()
 				if initOffline == 6 {
 					tempStreamInfo = getStreamInfo()
 					offlineNewTitle = tempStreamInfo.Data[0].Title
 					if offlineOldTitle != offlineNewTitle {
-						if notifyOnOfflineTitleChange {
-							playSound()
+						if !silentMode {
+							if notifyOnOfflineTitleChange {
+								playSound()
+							}
+							clearCLI()
+							println("Title changed to: " + offlineNewTitle)
+							println("----------------------------------------------------")
+							println(streamName + " is currently offline. Waiting for change (Checking every " + fmt.Sprint(retryInterval) + "s)")
 						}
-						clearCLI()
-						println("Title changed to: " + offlineNewTitle)
-						println("----------------------------------------------------")
-						println(streamName + " is currently offline. Waiting for change (Checking every " + fmt.Sprint(retryInterval) + "s)")
+
+						if notifyOnOfflineTitleChange && discordMode {
+							dcChannel.Session.ChannelMessageSend(dcChannel.ChannelID, streamName+" - Offline title changed to: "+offlineNewTitle)
+						}
+
 						offlineOldTitle = offlineNewTitle
 					}
 				}
@@ -143,11 +192,18 @@ func getStreamInfoWithOnlineCheck() stream {
 			}
 			wasOnline = true
 		}
-		initOffline = 1
-		initOnline = 1
-		playSound()
-		clearCLI()
-		println(streamName + " just went online")
+		initOffline = 6
+		initOnline = 6
+		if !silentMode {
+			playSound()
+			clearCLI()
+			println(streamName + " just went online")
+		}
+
+		if discordMode {
+			dcChannel.Session.ChannelMessageSend(dcChannel.ChannelID, streamName+" just went online")
+		}
+
 	}
 	return tempStreamInfo
 }
@@ -176,12 +232,38 @@ func waitRetryInterval() {
 func parseFlags() {
 	flag.StringVar(&streamName, "c", "xqcow", "provide the name of the twitch channel")
 	flag.IntVar(&retryInterval, "t", 10, "provide the interval (in seconds) in which to refresh the stream's information")
+	flag.BoolVar(&discordMode, "dcbot", false, "used for discord bot implementation")
 	flag.Parse()
+
+	if discordMode {
+		silentMode = true
+	}
 }
 
 func checkError(errorVar error) {
 	if errorVar != nil {
 		log.Fatal(errorVar)
 		os.Exit(1)
+		/*logAgain:
+		if _, err := os.Stat("error.log"); err == nil {
+			errLogFile, err = os.Open("error.log")
+			if err == nil {
+				log.SetOutput(errLogFile)
+				log.Println(errorVar)
+				errLogFile.Sync()
+			}
+		} else if os.IsNotExist(err) {
+			errLogFile, err = os.Create("error.log")
+			goto logAgain
+		}*/
 	}
+}
+
+func ctrlC() {
+	sc := make(chan os.Signal, 1)
+	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
+	<-sc
+	println("Exiting...")
+	bot.Close()
+	os.Exit(1)
 }

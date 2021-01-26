@@ -39,34 +39,12 @@ func getGameInfo(streamDataJSON stream) game {
 	return gameInfo
 }
 
-type game struct {
-	Data []struct {
-		ID        string `json:"id"`
-		Name      string `json:"name"`
-		BoxArtURL string `json:"box_art_url"`
-	} `json:"data"`
-}
-
 func getStreamInfo() stream {
 	var params (string) = "search/channels?first=1"
 	params += "&query=" + streamName
 	streamJSON := getAPIInfo(params)
 	json.Unmarshal([]byte(streamJSON), &streamInfo)
 	return streamInfo
-}
-
-type stream struct {
-	Data []struct {
-		BroadcasterLanguage string   `json:"broadcaster_language"`
-		DisplayName         string   `json:"display_name"`
-		GameID              string   `json:"game_id"`
-		ID                  string   `json:"id"`
-		Islive              bool     `json:"is_live"`
-		TagIDs              []string `json:"tag_ids"`
-		ThumbnailURL        string   `json:"thumbnail_url"`
-		Title               string   `json:"title"`
-		StartedAt           string   `json:"started_at"`
-	} `json:"data"`
 }
 
 func getAPIInfo(endPointAndParams string) string {
@@ -81,21 +59,6 @@ func getAPIInfo(endPointAndParams string) string {
 	return apiJSON
 }
 
-type apiValidation struct {
-	Error     string   `json:"error"`
-	Status    int      `json:"status"`
-	Message   string   `json:"message"`
-	ClientID  string   `json:"client_id"`
-	Scopes    []string `json:"scopes"`
-	ExpiresIn int      `json:"expires_in"`
-}
-
-type apiToken struct {
-	AccessToken string `json:"access_token"`
-	TokenType   int    `json:"token_type"`
-	ExpiresIn   int    `json:"expires_in"`
-}
-
 func checkAPIToken() {
 	httpClient := &http.Client{}
 	req, _ := http.NewRequest("GET", "https://api.twitch.tv/helix/streams?user_login=twitch", nil)
@@ -104,9 +67,9 @@ func checkAPIToken() {
 	resp, err := httpClient.Do(req)
 	checkError(err)
 	body, _ := ioutil.ReadAll(resp.Body)
-	apiJSON := string(body)
+	apiJSON := body
 	var APIInfo apiValidation
-	json.Unmarshal([]byte(apiJSON), &APIInfo)
+	json.Unmarshal(apiJSON, &APIInfo)
 
 	if APIInfo.Error != "" {
 		println("Error " + fmt.Sprint(APIInfo.Status) + " (" + APIInfo.Error + "): " + APIInfo.Message)
@@ -153,9 +116,9 @@ func getNewAPITokenJSON() apiToken {
 	resp, err := httpClient.Do(req)
 	checkError(err)
 	body, _ := ioutil.ReadAll(resp.Body)
-	apiJSON := string(body)
+	apiJSON := body
 	var TokenResponse apiToken
-	json.Unmarshal([]byte(apiJSON), &TokenResponse)
+	json.Unmarshal(apiJSON, &TokenResponse)
 
 	//Check Responsse for validity
 	if len(TokenResponse.AccessToken) != 30 {

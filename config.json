@@ -9,5 +9,6 @@
         "Just Chatting"
     ],
     "NotifyOnOfflineTitleChange": true,
-    "NotifyOnOnlineTitleChange": false
+    "NotifyOnOnlineTitleChange": false,
+    "DiscordBotToken": "CHANGE"
 }
